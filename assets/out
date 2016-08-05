@@ -3,34 +3,50 @@
 exec 3>&1 # make stdout available as fd 3 for the result
 exec 1>&2 # redirect all output to stderr for logging
 
-curl -X POST -d "2=2" http://requestb.in/14i248t1
+curl -X POST -d "IN=IN" http://requestb.in/14i248t1
 
 # for jq
 PATH=/usr/local/bin:$PATH
 
-curl -X POST -d "3=3" http://requestb.in/14i248t1
-
 payload=$(mktemp /tmp/resource-in.XXXXXX)
-
-curl -X POST -d "4=4" http://requestb.in/14i248t1
-
 cat > $payload <&0
 
-curl -X POST -d "5=5" http://requestb.in/14i248t1
+CHEETAH_NAME=$(jq -r '.params.PARAM_CHEETAH_NAME // ""' < $payload)
+BUILD_BRANCH=$(jq -r '.params.PARAM_BRANCH_NAME // ""' < $payload)
+BUILD_STATUS=$(jq -r '.params.PARAM_BUILD_STATUS // ""' < $payload)
+STASH_TOKEN=$(jq -r '.params.PARAM_STASH_TOKEN // ""' < $payload)
+REVISION=$(jq -r '.params.PARAM_REVISION // ""' < $payload)
 
-curl -X POST -d "ATC_EXTERNAL_URL=${ATC_EXTERNAL_URL}" http://requestb.in/14i248t1
+curl -X POST -d "CHEETAH_NAME=$CHEETAH_NAME&BUILD_BRANCH=$BUILD_BRANCH&BUILD_STATUS=$BUILD_STATUS&REVISION=$REVISION" http://requestb.in/14i248t1
 
-build_url=$(jq -r '.params.build_url // ""' < $payload)
+BUILD_JOB_NUMBER=$BUILD_NAME
+BUILD_URL="$ATC_EXTERNAL_URL/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME"
 
-curl -X POST -d "6=6" http://requestb.in/14i248t1
+curl -X POST -d "BUILD_JOB_NUMBER=$BUILD_JOB_NUMBER&BUILD_URL=$BUILD_URL" http://requestb.in/14i248t1
 
-curl -X POST -d "build_url=${build_url}" http://requestb.in/14i248t1
+if [ -n "$REVISION" ]; then
+    BUILD_AUTHOR=`cat "$REVISION" | jq '.["author"]' | xargs`
+    BUILD_COMMIT=`cat "$REVISION" | jq '.["revision"]' | xargs`
+    STASH_URL="https://stash.zipcar.com/rest/build-status/1.0/commits/"$BUILD_COMMIT
 
-build_url="$(eval printf ${build_url} )"
-curl -X POST -d "build_url1=${build_url}" http://requestb.in/14i248t1
+    curl -X POST -d "BUILD_AUTHOR=$BUILD_AUTHOR&BUILD_COMMIT=$BUILD_COMMIT" http://requestb.in/14i248t1
+fi
 
-build_url="$(echo "${build_url}" | jq -R -s .)"
-curl -X POST -d "build_url2=${build_url}" http://requestb.in/14i248t1
+KEY="${CHEETAH_NAME}-${BUILD_BRANCH}"
+NAME="$KEY-${BUILD_JOB_NUMBER}"
 
+STASH_JSON='{"state": "'$BUILD_STATUS'", "key": "'$KEY'", "name": "'$NAME'", "url": "'$BUILD_URL'", "description": "'$BUILD_AUTHOR'"}'
+
+curl -X POST -d "STASH_URL=$STASH_URL&STASH_JSON=$STASH_JSON" http://requestb.in/14i248t1
+
+AC_HEADER="Accept: application/json"
+CT_HEADER="Content-Type: application/json"
+
+USER_HEADER="X-Auth-User:ivojinovic"
+TOKEN_HEADER="X-Auth-Token:$STASH_TOKEN"
+
+if [ -n "$REVISION" ]; then
+    curl -D- -H "$USER_HEADER" -H "$TOKEN_HEADER" -H "$AC_HEADER" -H "$CT_HEADER" -X POST -d "$STASH_JSON" "$STASH_URL"
+fi
 
 jq -n "{version: {ref: $(echo none | jq -R .)}}" >&3
