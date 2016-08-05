@@ -27,6 +27,10 @@ BUILD_URL="$ATC_EXTERNAL_URL/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME
 curl -X POST -d "BUILD_JOB_NUMBER=$BUILD_JOB_NUMBER&BUILD_URL=$BUILD_URL" http://requestb.in/14i248t1
 
 if [ -n "$REVISION" ]; then
+    REVISION_FILE_CONTENT=`cat "${REVISION}"`
+
+    curl -X POST -d "REVISION_FILE_CONTENT=$REVISION_FILE_CONTENT" http://requestb.in/14i248t1
+
     BUILD_AUTHOR=`cat "$REVISION" | jq '.["author"]' | xargs`
     BUILD_COMMIT=`cat "$REVISION" | jq '.["revision"]' | xargs`
     STASH_URL="https://stash.zipcar.com/rest/build-status/1.0/commits/"$BUILD_COMMIT
