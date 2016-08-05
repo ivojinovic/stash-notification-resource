@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 
+cd "${1}"
+
 exec 3>&1 # make stdout available as fd 3 for the result
 exec 1>&2 # redirect all output to stderr for logging
 
-curl -X POST -d "IN=IN" http://requestb.in/14i248t1
+curl -X POST -d "IN=IN&1=${1}" http://requestb.in/14i248t1
 
 # for jq
 PATH=/usr/local/bin:$PATH
