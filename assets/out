@@ -28,4 +28,4 @@ curl -X POST -d "6=6" http://requestb.in/14i248t1
 
 curl -X POST -d "build_url=$build_url" http://requestb.in/14i248t1
 
-echo '{"version":{"ref":"none"}}' >&3
+jq -n "{version: {ref: $(echo none | jq -R .)}}" >&3
