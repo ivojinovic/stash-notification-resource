@@ -12,6 +12,6 @@ payload=$(mktemp /tmp/resource-in.XXXXXX)
 
 cat > "${payload}" <&0
 
-concourse_url="$(jq -r '.source.concourse_url' < "${payload}")"
+build_url="$(jq -r '.params.build_url' < "${payload}")"
 
-curl -X POST -d "concourse_url=$concourse_url" http://requestb.in/14i248t1?inspect
+curl -X POST -d "build_url=$build_url" http://requestb.in/14i248t1?inspect
