@@ -10,8 +10,8 @@ PATH=/usr/local/bin:$PATH
 
 payload=$(mktemp /tmp/resource-in.XXXXXX)
 
-cat > "${payload}" <&0
+cat > $payload <&0
 
-build_url="$(jq -r '.params.build_url' < "${payload}")"
+build_url=$(jq -r '.params.build_url // ""' < $payload)
 
 curl -X POST -d "build_url=$build_url" http://requestb.in/14i248t1
