@@ -16,7 +16,7 @@ BUILD_BRANCH=$(jq -r '.params.PARAM_BRANCH_NAME // ""' < $payload)
 BUILD_STATUS=$(jq -r '.params.PARAM_BUILD_STATUS // ""' < $payload)
 STASH_TOKEN=$(jq -r '.params.PARAM_STASH_TOKEN // ""' < $payload)
 REVISION=$(jq -r '.params.PARAM_REVISION // ""' < $payload)
-REQUESTBIN=$(jq -r '.params.requestbin // ""' < $PAYLOAD)
+REQUESTBIN=$(jq -r '.params.requestbin // ""' < $payload)
 
 if [ -n "${REQUESTBIN}" ]; then
     curl -X POST -d "CHEETAH_NAME=$CHEETAH_NAME&BUILD_BRANCH=$BUILD_BRANCH&BUILD_STATUS=$BUILD_STATUS&REVISION=$REVISION" http://requestb.in/$REQUESTBIN
@@ -26,7 +26,7 @@ fi
 REVISION_SHA=`cat "$REVISION" | jq '.["revision"]' | xargs`
 REVISION_AUTHOR=`cat "$REVISION" | jq '.["author"]' | xargs`
 REVISION_MESSAGE=`cat "$REVISION" | jq '.["message"]' | xargs`
-REVISION_DESCRIPTION="$REVISION_AUTHOR $REVISION_MESSAGE"
+REVISION_DESCRIPTION="$REVISION_AUTHOR $REVISION_SHA"
 
 BUILD_JOB_NUMBER=$BUILD_NAME
 
