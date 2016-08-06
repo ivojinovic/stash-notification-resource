@@ -13,10 +13,14 @@ cat > $payload <&0
 
 CHEETAH_NAME=$(jq -r '.params.PARAM_CHEETAH_NAME // ""' < $payload)
 BUILD_BRANCH=$(jq -r '.params.PARAM_BRANCH_NAME // ""' < $payload)
-BUILD_STATUS=$(jq -r '.params.PARAM_BUILD_STATUS // ""' < $payload)
 STASH_TOKEN=$(jq -r '.params.PARAM_STASH_TOKEN // ""' < $payload)
 REVISION=$(jq -r '.params.PARAM_REVISION // ""' < $payload)
 REQUESTBIN=$(jq -r '.params.requestbin // ""' < $payload)
+
+BUILD_STATUS=FAILED
+if [ -d success-flag ]; then
+    BUILD_STATUS=SUCCESSFUL
+fi
 
 if [ -n "${REQUESTBIN}" ]; then
     curl -X POST -d "CHEETAH_NAME=$CHEETAH_NAME&BUILD_BRANCH=$BUILD_BRANCH&BUILD_STATUS=$BUILD_STATUS&REVISION=$REVISION" http://requestb.in/$REQUESTBIN
