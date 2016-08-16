@@ -13,6 +13,7 @@ cat > $payload <&0
 
 CHEETAH_NAME=$(jq -r '.params.PARAM_CHEETAH_NAME // ""' < $payload)
 BUILD_BRANCH=$(jq -r '.params.PARAM_BRANCH_NAME // ""' < $payload)
+BUILD_GROUP=$(jq -r '.params.PARAM_GROUP_NAME // ""' < $payload)
 BUILD_STATUS=$(jq -r '.params.PARAM_BUILD_STATUS // ""' < $payload)
 STASH_TOKEN=$(jq -r '.params.PARAM_STASH_TOKEN // ""' < $payload)
 REVISION=$(jq -r '.params.PARAM_REVISION // ""' < $payload)
@@ -34,7 +35,7 @@ KEY="${CHEETAH_NAME}-${BUILD_BRANCH}"
 NAME="$KEY-${BUILD_JOB_NUMBER}"
 
 if [ $BUILD_STATUS == "INPROGRESS" ]; then
-    BUILD_URL="$ATC_EXTERNAL_URL/pipelines/$CHEETAH_NAME?groups=$BUILD_BRANCH"
+    BUILD_URL="$ATC_EXTERNAL_URL/pipelines/$CHEETAH_NAME?groups=$BUILD_GROUP"
 else
     BUILD_URL="$ATC_EXTERNAL_URL/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_JOB_NUMBER"
 fi
