@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
-curl -X POST -d "fizz=buzz" https://hookbin.com/bin/ZjPlo5Xj
+LOC_TIMESTAMP=$(date +%s)
 
-echo "[]"
+curl -X POST -d "check=$LOC_TIMESTAMP" https://hookbin.com/bin/ZjPlo5Xj
+
+echo '[{ "ref": "'$LOC_TIMESTAMP'" }]'
