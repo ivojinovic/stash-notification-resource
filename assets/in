@@ -2,6 +2,6 @@
 
 LOC_TIMESTAMP=$(date +%s)
 
-curl -X POST -d "in=$LOC_TIMESTAMP" https://hookbin.com/bin/ZjPlo5Xj
+curl -X POST -d "in=$LOC_TIMESTAMP" https://hookb.in/ZjPlo5Xj
 
 echo '{"version":{"ref":"'$LOC_TIMESTAMP'"}}'
