@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
-curl -X POST -d "fizz=buzz" http://requestb.in/1emfoh21
+curl -X POST -d "fizz=buzz" https://hookbin.com/bin/ZjPlo5Xj
 
 echo "[]"
