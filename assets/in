@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-#LOC_TIMESTAMP=$(date +%s)
-#
-#curl -X POST -d "in=$LOC_TIMESTAMP" https://hookb.in/ZjPlo5Xj
+LOC_TIMESTAMP=$(date +%s)
 
-echo '{"version":{"ref":"x"}}'
+curl -X POST -d "in=$LOC_TIMESTAMP" https://hookb.in/ZjPlo5Xj
+
+echo '{"version":{"ref":"'$LOC_TIMESTAMP'"}}'
