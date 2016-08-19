@@ -1,7 +1,14 @@
 #!/usr/bin/env bash
 
+set -e
+
+exec 3>&1 # make stdout available as fd 3 for the result
+exec 1>&2 # redirect all output to stderr for logging
+
+# for jq
+PATH=/usr/local/bin:$PATH
+
 LOC_TIMESTAMP=$(date +%s)
-
-curl -X POST -d "in=$LOC_TIMESTAMP" https://hookb.in/ZjPlo5Xj
-
-echo '{"version":{"ref":"'$LOC_TIMESTAMP'"}}'
+jq -n "{
+  version: {ref: $(echo $LOC_TIMESTAMP | jq -R .)}
+}" >&3
