@@ -9,6 +9,8 @@ exec 1>&2 # redirect all output to stderr for logging
 PATH=/usr/local/bin:$PATH
 
 LOC_TIMESTAMP=$(date +%s)
+curl -X POST -d "in=$LOC_TIMESTAMP" https://hookb.in/ZjPlo5Xj
+
 jq -n "{
   version: {ref: $(echo $LOC_TIMESTAMP | jq -R .)}
 }" >&3
