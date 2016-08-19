@@ -17,4 +17,6 @@ export PARAM_OLD_REF=$(jq -r '.version.ref // ""' < $payload)
 
 LOC_TIMESTAMP=$(date +%s)
 
+curl -X POST -d "check=$LOC_TIMESTAMP" https://hookb.in/ZjPlo5Xj
+
 echo '[{ "ref": "'$PARAM_OLD_REF'" }, { "ref": "'$LOC_TIMESTAMP'" }]' >&3
